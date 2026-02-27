@@ -181,6 +181,7 @@ Las pruebas implementadas en JUnit validan todos los escenarios definidos en el 
 
 Por tanto, la calculadora cumple los requisitos funcionales establecidos.
 
+
 ## Puntos a añadir:
 
 # Uso de Enumeraciones (enum) en Java
@@ -224,15 +225,87 @@ calcular(int a, int b, Operacion operacion)
 
 En ese caso, el `enum` permitiría controlar de forma segura qué tipo de operación se desea ejecutar, evitando errores y mejorando la claridad del código.
 
-## Conclusión
 
-En esta práctica concreta, el uso de enumeraciones no es obligatorio ni necesario para la realización de las pruebas de caja negra, ya que las operaciones están separadas en métodos individuales.
+# 8 Aplicación de Enumeración y Testing Parametrizado (Caja Negra)
 
-No obstante, se trata de una buena práctica de programación que puede aplicarse en diseños más estructurados o en versiones futuras del proyecto.
+Con el objetivo de mejorar la organización de las pruebas y cubrir todas las operaciones de la calculadora de forma estructurada, se ha aplicado una **enumeración (`enum`)** junto con un test parametrizado.
 
+## Definición de la Enumeración
+
+Se ha definido la siguiente enumeración para representar las operaciones posibles:
+
+```java
+enum Operacion {
+    SUMA,
+    RESTA,
+    MULTIPLICACION,
+    DIVISION
+}
+````
+
+Esta enumeración permite definir un conjunto cerrado y controlado de valores para representar las operaciones matemáticas.
+
+Desde el enfoque de **caja negra**, la enumeración representa las posibles entradas relacionadas con la operación sin depender de la implementación interna del sistema.
+
+---
+
+## Test Parametrizado con Enum
+
+Se ha implementado un test parametrizado que recorre automáticamente todos los valores definidos en la enumeración:
+
+```java
+@ParameterizedTest
+@EnumSource(Operacion.class)
+void probarOperaciones(Operacion op) throws OperacionNoValidaException {
+
+    int a = 6;
+    int b = 3;
+
+    switch(op) {
+
+        case SUMA:
+            assertEquals(9, Calculadora.sumar(a,b));
+            break;
+
+        case RESTA:
+            assertEquals(3, Calculadora.restar(a,b));
+            break;
+
+        case MULTIPLICACION:
+            assertEquals(18, Calculadora.multiplicar(a,b));
+            break;
+
+        case DIVISION:
+            assertEquals(2, Calculadora.dividir(a,b));
+            break;
+    }
+}
 ```
 
 ---
 
-Si quieres, puedo adaptarlo a un tono más simple (nivel DAM/DAW) o más técnico (nivel universitario).
-```
+## Justificación desde la Caja Negra
+
+Este test cumple con la metodología de caja negra porque:
+
+* Se prueban todas las operaciones posibles como entradas.
+* No se analiza la implementación interna del método.
+* Solo se verifica el resultado esperado para cada operación.
+
+El uso de `@ParameterizedTest` permite ejecutar automáticamente la prueba para cada valor definido en la enumeración, garantizando cobertura completa de las operaciones definidas.
+
+---
+
+## Conclusión
+
+La combinación de enumeraciones y pruebas parametrizadas mejora:
+
+* La organización del código de pruebas.
+* La mantenibilidad del proyecto.
+* La cobertura de pruebas bajo el enfoque de caja negra.
+
+Además, permite validar todas las operaciones de la calculadora de forma estructurada y automática.
+
+
+
+

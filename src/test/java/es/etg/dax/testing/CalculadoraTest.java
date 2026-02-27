@@ -3,58 +3,53 @@ package es.etg.dax.testing;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import es.etg.dax.testing.exception.OperacionNoValidaException;
+
+// 🔵 ENUM DEFINIDO ARRIBA DE LA CLASE
+enum Operacion {
+    SUMA,
+    RESTA,
+    MULTIPLICACION,
+    DIVISION
+}
 
 // Las clases de test suelen tener el sufijo Test
 public class CalculadoraTest {
 
-    Calculadora calculadora = new Calculadora(); //
+    Calculadora calculadora = new Calculadora();
 
     @Test
     void sumarPositivos() {
-
-        int valor1 = 2;
-        int valor2 = 3;
-        int esperado = 5;
-
-        assertEquals(esperado, Calculadora.sumar(valor1, valor2));
+        assertEquals(5, Calculadora.sumar(2, 3));
     }
 
     @Test
     void sumarPositivosMal() {
-
-        int valor1 = 2;
-        int valor2 = 3;
-        int esperado = 4;
-
-        assertEquals(esperado, Calculadora.sumar(valor1, valor2));
+        assertEquals(4, Calculadora.sumar(2, 3));
     }
 
-    // @Test de varias pruebas juntas
     @Test
     void sumar() {
-
-        // Se realizan 4 pruebas y si las cuatro son ok, sumar será ok.
         assertAll("Suma",
-                () -> assertEquals(5, Calculadora.sumar(1, 4), "1 + 4 = 5"),
-                () -> assertEquals(5, Calculadora.sumar(2, 3), "2 + 3 = 5"),
-                () -> assertEquals(1, Calculadora.sumar(0, 1), "0 + 1 = 1"),
-                () -> assertEquals(-1, Calculadora.sumar(1, -2), "1 + (-2) = -1"));
-
+                () -> assertEquals(5, Calculadora.sumar(1, 4)),
+                () -> assertEquals(5, Calculadora.sumar(2, 3)),
+                () -> assertEquals(1, Calculadora.sumar(0, 1)),
+                () -> assertEquals(-1, Calculadora.sumar(1, -2)));
     }
 
-    // Esta prueba comprueba que al dividir por cero se lanza una excepción
-    // controlada: OperacionNoValidaException
     @Test
     @DisplayName("Probar la división por cero")
     void dividirPorZeroException() {
-        var ex = assertThrows(OperacionNoValidaException.class, () -> Calculadora.dividir(4, 0),
-                "La división por cero no está permitida");
-        assertEquals(OperacionNoValidaException.MSG, ex.getMessage());
+        var ex = assertThrows(OperacionNoValidaException.class,
+                () -> Calculadora.dividir(4, 0));
 
+        assertEquals(OperacionNoValidaException.MSG, ex.getMessage());
     }
 
     @Test
@@ -77,14 +72,40 @@ public class CalculadoraTest {
     void testDivision() throws OperacionNoValidaException {
         assertAll("Division",
                 () -> assertEquals(2, Calculadora.dividir(6, 3)),
-                () -> assertEquals(2, Calculadora.dividir(5, 2)) // división entera
-        );
-
+                () -> assertEquals(2, Calculadora.dividir(5, 2)));
     }
 
     @Test
     void testDivisionPorCero() {
         assertThrows(OperacionNoValidaException.class,
                 () -> Calculadora.dividir(5, 0));
+    }
+
+    // 🔥 TEST PARAMETRIZADO CON ENUM
+    @ParameterizedTest
+    @EnumSource(Operacion.class)
+    void probarOperaciones(Operacion op) throws OperacionNoValidaException {
+
+        int a = 6;
+        int b = 3;
+
+        switch (op) {
+
+            case SUMA:
+                assertEquals(9, Calculadora.sumar(a, b));
+                break;
+
+            case RESTA:
+                assertEquals(3, Calculadora.restar(a, b));
+                break;
+
+            case MULTIPLICACION:
+                assertEquals(18, Calculadora.multiplicar(a, b));
+                break;
+
+            case DIVISION:
+                assertEquals(2, Calculadora.dividir(a, b));
+                break;
+        }
     }
 }
