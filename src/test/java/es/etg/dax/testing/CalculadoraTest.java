@@ -56,4 +56,35 @@ public class CalculadoraTest {
         assertEquals(OperacionNoValidaException.MSG, ex.getMessage());
 
     }
+
+    @Test
+    void testResta() {
+        assertAll("Resta",
+                () -> assertEquals(2, Calculadora.restar(5, 3)),
+                () -> assertEquals(-2, Calculadora.restar(-5, -3)),
+                () -> assertEquals(-4, Calculadora.restar(0, 4)));
+    }
+
+    @Test
+    void testMultiplicacion() {
+        assertAll("Multiplicacion",
+                () -> assertEquals(6, Calculadora.multiplicar(2, 3)),
+                () -> assertEquals(-6, Calculadora.multiplicar(-2, 3)),
+                () -> assertEquals(0, Calculadora.multiplicar(0, 5)));
+    }
+
+    @Test
+    void testDivision() throws OperacionNoValidaException {
+        assertAll("Division",
+                () -> assertEquals(2, Calculadora.dividir(6, 3)),
+                () -> assertEquals(2, Calculadora.dividir(5, 2)) // división entera
+        );
+
+    }
+
+    @Test
+    void testDivisionPorCero() {
+        assertThrows(OperacionNoValidaException.class,
+                () -> Calculadora.dividir(5, 0));
+    }
 }
