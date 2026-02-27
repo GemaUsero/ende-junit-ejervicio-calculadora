@@ -1,137 +1,124 @@
-# Testing con Junit
-
-1. ¿Qué sentido puede tener este proyecto y para que lo podrías usar?
-
-
-2. Revisa las pruebas de la suma y comenta lo que te parezca de interés
-
-
-3. Realiza un estudio de caja negra de la división e implementa las pruebas en junit: Se realizará en markdown.
 
 
 # PRÁCTICA: ANÁLISIS Y TESTING DE UNA CALCULADORA EN JAVA
 
 ---
 
-# 1. Sentido del proyecto y posibles usos
+## 1️ Sentido del proyecto y posibles usos
 
-## 1.1 Descripción general
+### 1.1 Descripción general
 
-El proyecto consiste en una clase `Calculadora` que implementa cuatro operaciones aritméticas básicas:
+El proyecto consiste en una clase `Calculadora` que implementa operaciones aritméticas básicas:
 
-- Suma
-- Resta
-- Multiplicación
-- División
+* Suma
+* Resta
+* Multiplicación
+* División
 
-Además, incluye una excepción personalizada llamada `OperacionNoValidaException` que se lanza cuando se intenta dividir entre cero.
+Además, incluye una excepción personalizada `OperacionNoValidaException` para controlar divisiones entre cero, permitiendo manejar errores de forma controlada.
 
----
+### 1.2 Sentido del proyecto
 
-## 1.2 Sentido del proyecto
+Este proyecto tiene un enfoque **didáctico y práctico**, que permite trabajar los siguientes conceptos:
 
-Este proyecto tiene un enfoque principalmente didáctico y permite trabajar los siguientes conceptos:
+* Métodos estáticos (`static`) en Java.
+* Operaciones aritméticas básicas con enteros.
+* Manejo de **excepciones personalizadas**.
+* Pruebas unitarias con **JUnit 5**.
+* Técnicas de prueba de **caja negra** y análisis funcional.
+* Cobertura de código y control de errores.
+* Validación del comportamiento esperado mediante testing automatizado.
 
-- Métodos estáticos en Java.
-- Operaciones aritméticas básicas.
-- Manejo de excepciones.
-- Creación de excepciones personalizadas.
-- Pruebas unitarias con JUnit.
-- Técnicas de prueba de caja negra.
+Es un ejemplo simple, pero útil para entender la **importancia de las pruebas** y la separación entre **lógica y control de errores**.
 
-Es un ejemplo claro y sencillo para introducir conceptos de calidad del software.
+### 1.3 Posibles usos
 
-Aunque se trata de una calculadora sencilla, sirve como base sólida para entender la importancia del control de errores y la validación del comportamiento del software mediante pruebas automatizadas.
-
----
-
-## 1.3 Posibles usos
-
-Aunque es un proyecto simple, puede utilizarse como:
-
-- Base para una calculadora más compleja.
-- Ejercicio práctico en asignaturas de programación.
-- Introducción al testing automatizado.
-- Ejemplo para explicar el manejo de errores en Java.
+* Base para una calculadora más compleja.
+* Ejercicio práctico en asignaturas de programación.
+* Introducción a **pruebas automatizadas** y diseño de pruebas.
+* Ejemplo de control de errores y buenas prácticas en Java.
 
 ---
 
-# 2. Revisión de las pruebas de la suma
+## 2️ Análisis de la suma
 
-
-## 2.1 Método analizado
+### 2.1 Método sumar
 
 ```java
 public static int sumar(int a, int b){
-    return a+b;
+    return a + b;
 }
-``
-
-
-
 ```
 
-Contiene cuatro métodos estáticos:
+* Método `static`: no requiere crear instancia de la clase.
+* Realiza la operación básica de suma de enteros.
+* Se puede usar con valores positivos, negativos o cero.
 
-- `sumar(int a, int b)`
-- `restar(int a, int b)`
-- `multiplicar(int a, int b)`
-- `dividir(int a, int b)`
+### 2.2 Pruebas de suma
 
-Todos los métodos son `static`, lo que significa que no es necesario crear un objeto de la clase para utilizarlos. Esto tiene sentido porque una calculadora no necesita estado interno; simplemente ejecuta operaciones.
+#### 2.2.1 Prueba correcta
 
----
-
-## Test suma
-
-Prueba correcta
 ```java
 @Test
 void sumarPositivos() {
     assertEquals(5, Calculadora.sumar(2, 3));
 }
-
-Verifica el comportamiento básico.
-## 2.1 Análisis del método dividir:
-
 ```
 
+* Verifica suma de enteros positivos.
+* Confirma que el método retorna el valor esperado.
 
-## dividir
+#### 2.2.2 Prueba incorrecta intencionada
 
 ```java
-
-public static int dividir(int a, int b) throws OperacionNoValidaException{
-    if (b==0)
-        throw new OperacionNoValidaException();
-    else
-        return a/b;
+@Test
+void sumarPositivosMal() {
+    assertEquals(4, Calculadora.sumar(2, 3));
 }
 ```
 
-Este método introduce un concepto importante:
+* Muestra qué ocurre cuando la prueba falla.
+* Permite interpretar los errores que JUnit muestra.
+* Enseña la importancia de definir correctamente el valor esperado.
 
--Control explícito de error
--Excepción personalizada
--Uso de throws en la firma del método
-
-En lugar de permitir que Java lance una ArithmeticException, el profesor crea una excepción propia (OperacionNoValidaException). Esto es una buena práctica cuando se quiere:
-
-Controlar el tipo de error.
-
-Personalizar el mensaje.
-
-Adaptar el comportamiento a las necesidades del sistema.
-
-## 2.2. Análisis de la excepción personalizada
-
-Clase:
+#### 2.2.3 Uso de assertAll
 
 ```java
+assertAll("Suma",
+    () -> assertEquals(5, Calculadora.sumar(1, 4)),
+    () -> assertEquals(5, Calculadora.sumar(2, 3)),
+    () -> assertEquals(1, Calculadora.sumar(0, 1)),
+    () -> assertEquals(-1, Calculadora.sumar(1, -2))
+);
+```
 
-es.etg.dax.testing.exception.OperacionNoValidaException
-public class OperacionNoValidaException extends Exception{
+* Agrupa varias comprobaciones en un solo test.
+* Ejecuta todas las comprobaciones incluso si alguna falla.
+* Permite mostrar todos los errores al final de la prueba.
 
+---
+
+## 3️ Análisis del método dividir (Caja Negra)
+
+### 3.1 Método dividir
+
+```java
+public static int dividir(int a, int b) throws OperacionNoValidaException {
+    if (b == 0)
+        throw new OperacionNoValidaException();
+    else
+        return a / b;
+}
+```
+
+* Control explícito de error con excepción personalizada.
+* Evita `ArithmeticException` estándar de Java.
+* Obliga a manejar `throws` en la firma del método.
+
+### 3.2 Excepción personalizada
+
+```java
+public class OperacionNoValidaException extends Exception {
     public static final String MSG = "No se puede dividir por cero";
 
     @Override
@@ -141,161 +128,81 @@ public class OperacionNoValidaException extends Exception{
 }
 ```
 
-Aspectos importantes:
-
-Hereda de Exception → es una excepción checked.
-
-Obliga a usar throws en el método dividir.
-
-Define un mensaje constante (MSG).
-
-Sobrescribe getMessage().
-
-## Prueba incorrecta intencionada:
-
-```java
-
-@Test
-void sumarPositivosMal() {
-    assertEquals(4, Calculadora.sumar(2, 3));
-}
-
-```
-
--Qué ocurre cuando una prueba falla.
-
--Cómo JUnit muestra errores.
-
--La importancia de definir correctamente el valor esperado.
-
-## Uso de assertAll
-
-```java
-assertAll("Suma",
-    () -> assertEquals(5, Calculadora.sumar(1, 4)),
-    () -> assertEquals(5, Calculadora.sumar(2, 3)),
-    () -> assertEquals(1, Calculadora.sumar(0, 1)),
-    () -> assertEquals(-1, Calculadora.sumar(1, -2))
-
-);
-
-```
-assertAll permite:
-
-Agrupar varias comprobaciones.
-
-Ejecutarlas todas aunque una falle.
-
-Mostrar todos los errores al final.
-
-## 3.Estudio de Caja Negra – Método `dividir`
-
-El análisis de caja negra del método `dividir` ha permitido:
-
-- Identificar correctamente las entradas y salidas.
-- Definir clases de equivalencia válidas e inválidas.
-- Establecer valores límite relevantes.
-- Determinar los casos de prueba necesarios para cubrir el comportamiento funcional.
-
-Se ha comprobado que el único caso inválido es cuando el divisor es cero, situación en la que se lanza una excepción personalizada.
-
-Este análisis demuestra la importancia de estudiar el comportamiento del método sin tener en cuenta su implementación interna.
-
-
-## 1️ Identificación del método a probar
-
-
-
-```java
-public static int dividir(int a, int b) throws OperacionNoValidaException{
-    if (b==0)
-        throw new OperacionNoValidaException();
-    else
-        return a/b;
-}
-```
+* Hereda de `Exception` → checked.
+* Mensaje constante y claro.
+* Permite personalizar el comportamiento de error.
+* Obliga a tratar la excepción con `try/catch` o `throws`.
 
 ---
-## 2️ Análisis Funcional (Caja Negra)
 
+## 4️ Análisis Funcional (Caja Negra)
 
-### ✔ Entradas
+### Entradas
 
 * `a` → Dividendo (int)
 * `b` → Divisor (int)
 
-### ✔ Salidas
+### Salidas
 
-* Resultado entero de `a / b`
+* Resultado entero de `a / b` (trunca decimales)
 * Excepción `OperacionNoValidaException` si `b == 0`
+
+### Observaciones
+
+* División entera: los decimales se truncan automáticamente.
+* Caso especial: `Integer.MIN_VALUE / -1` produce overflow en Java, se devuelve `Integer.MIN_VALUE` debido a límites del tipo `int`.
 
 ---
 
-# 3️ Clases de Equivalencia
+## 5️ Clases de Equivalencia
 
-##  Clases Válidas
+### Clases válidas
 
-| Clase | Descripción  | Ejemplo  | Resultado esperado |
-| ----- | ------------ | -------- | ------------------ |
-| CE1   | a > 0, b > 0 | 10 / 2   | 5                  |
-| CE2   | a < 0, b > 0 | -10 / 2  | -5                 |
-| CE3   | a > 0, b < 0 | 10 / -2  | -5                 |
-| CE4   | a < 0, b < 0 | -10 / -2 | 5                  |
-| CE5   | a = 0, b ≠ 0 | 0 / 5    | 0                  |
+| Clase | Descripción | Ejemplo | Resultado esperado |
+| ----- | ----------- | ------- | ------------------ |
+| CE1   | a>0, b>0    | 10/2    | 5                  |
+| CE2   | a<0, b>0    | -10/2   | -5                 |
+| CE3   | a>0, b<0    | 10/-2   | -5                 |
+| CE4   | a<0, b<0    | -10/-2  | 5                  |
+| CE5   | a=0, b≠0    | 0/5     | 0                  |
 
-##  Clases Inválidas
+### Clases inválidas
 
 | Clase | Descripción | Resultado esperado                  |
 | ----- | ----------- | ----------------------------------- |
-| CE6   | b = 0       | Lanzar `OperacionNoValidaException` |
+| CE6   | b=0         | Lanzar `OperacionNoValidaException` |
 
 ---
 
-# 4️ Análisis de Valores Límite
+## 6️ Valores límite
 
-| Caso                  | Justificación          | Resultado esperado |
-| --------------------- | ---------------------- | ------------------ |
-| b = 0                 | División inválida      | Excepción          |
-| a = 0                 | División válida        | 0                  |
-| a = Integer.MAX_VALUE | Valor extremo superior | MAX_VALUE          |
-| a = Integer.MIN_VALUE | Valor extremo inferior | Resultado correcto |
-| b = 1                 | No altera el valor     | a                  |
-
----
-
-# 5️ Casos de Prueba
-
-| ID  | Entrada (a,b)         | Resultado Esperado |
-| --- | --------------------- | ------------------ |
-| CP1 | (10,2)                | 5                  |
-| CP2 | (-10,2)               | -5                 |
-| CP3 | (10,-2)               | -5                 |
-| CP4 | (-10,-2)              | 5                  |
-| CP5 | (0,5)                 | 0                  |
-| CP6 | (5,0)                 | Excepción          |
-| CP7 | (Integer.MAX_VALUE,1) | Integer.MAX_VALUE  |
+| Caso                       | Justificación          | Resultado esperado |
+| -------------------------- | ---------------------- | ------------------ |
+| b = 0                      | División inválida      | Excepción          |
+| a = 0                      | División válida        | 0                  |
+| a = Integer.MAX_VALUE      | Valor extremo superior | Integer.MAX_VALUE  |
+| a = Integer.MIN_VALUE      | Valor extremo inferior | Resultado correcto |
+| b = 1                      | No altera el valor     | a                  |
+| a = Integer.MIN_VALUE / -1 | Caso especial overflow | Integer.MIN_VALUE  |
 
 ---
 
-# Implementación en JUnit 5
+## 7️ Casos de prueba (Caja Negra)
 
-### 5. Análisis de la clase CalculadoraTest
+| ID  | Entrada (a,b)          | Resultado esperado |
+| --- | ---------------------- | ------------------ |
+| CP1 | (10,2)                 | 5                  |
+| CP2 | (-10,2)                | -5                 |
+| CP3 | (10,-2)                | -5                 |
+| CP4 | (-10,-2)               | 5                  |
+| CP5 | (0,5)                  | 0                  |
+| CP6 | (5,0)                  | Excepción          |
+| CP7 | (Integer.MAX_VALUE,1)  | Integer.MAX_VALUE  |
+| CP8 | (Integer.MIN_VALUE,-1) | Integer.MIN_VALUE  |
 
-La clase de pruebas usa JUnit 5:
+---
 
-import static org.junit.jupiter.api.Assertions.*;
-
-Se utilizan:
-
--assertEquals
-
--assertThrows
-
--assertAll
-
--@DisplayName
-
-Esto indica un uso correcto del framework de testing.
+## 8️ Implementación en JUnit 5
 
 ```java
 package es.etg.dax.testing;
@@ -306,6 +213,7 @@ import es.etg.dax.testing.exception.OperacionNoValidaException;
 
 public class CalculadoraTest {
 
+    // División válida
     @Test
     void dividirDosPositivos() throws OperacionNoValidaException {
         assertEquals(5, Calculadora.dividir(10, 2));
@@ -332,20 +240,32 @@ public class CalculadoraTest {
     }
 
     @Test
+    void dividirValorMaximoEntreUno() throws OperacionNoValidaException {
+        assertEquals(Integer.MAX_VALUE, Calculadora.dividir(Integer.MAX_VALUE, 1));
+    }
+
+    @Test
+    void dividirValorMinimoEntreMenosUno() throws OperacionNoValidaException {
+        assertEquals(Integer.MIN_VALUE, Calculadora.dividir(Integer.MIN_VALUE, -1));
+    }
+
+    // División inválida
+    @Test
     void dividirEntreCeroDebeLanzarExcepcion() {
         assertThrows(OperacionNoValidaException.class, () -> {
             Calculadora.dividir(5, 0);
         });
-    }
-
-    @Test
-    void dividirValorMaximoEntreUno() throws OperacionNoValidaException {
-        assertEquals(Integer.MAX_VALUE, Calculadora.dividir(Integer.MAX_VALUE, 1));
     }
 }
 ```
 
 ---
 
+## 9️ Conclusión final
 
+* El análisis de **caja negra** es completo: entradas, salidas, clases de equivalencia y valores límite cubren todos los escenarios funcionales.
+* Las pruebas JUnit reflejan correctamente los casos de prueba planificados.
+* La división incluye control de excepciones con `OperacionNoValidaException`.
+* Las pruebas de suma demuestran el uso de `assertEquals` y `assertAll`.
+* El proyecto sirve para **prácticas de programación, testing y control de errores** y puede ampliarse para ejercicios más avanzados.
 
