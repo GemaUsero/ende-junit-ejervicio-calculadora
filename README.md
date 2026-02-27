@@ -41,6 +41,8 @@ Este proyecto tiene un enfoque principalmente didáctico y permite trabajar los 
 
 Es un ejemplo claro y sencillo para introducir conceptos de calidad del software.
 
+Aunque se trata de una calculadora sencilla, sirve como base sólida para entender la importancia del control de errores y la validación del comportamiento del software mediante pruebas automatizadas.
+
 ---
 
 ## 1.3 Posibles usos
@@ -56,15 +58,149 @@ Aunque es un proyecto simple, puede utilizarse como:
 
 # 2. Revisión de las pruebas de la suma
 
+
 ## 2.1 Método analizado
 
 ```java
 public static int sumar(int a, int b){
     return a+b;
 }
+``
+
+
 
 ```
+
+Contiene cuatro métodos estáticos:
+
+- `sumar(int a, int b)`
+- `restar(int a, int b)`
+- `multiplicar(int a, int b)`
+- `dividir(int a, int b)`
+
+Todos los métodos son `static`, lo que significa que no es necesario crear un objeto de la clase para utilizarlos. Esto tiene sentido porque una calculadora no necesita estado interno; simplemente ejecuta operaciones.
+
+---
+
+## Test suma
+
+Prueba correcta
+```java
+@Test
+void sumarPositivos() {
+    assertEquals(5, Calculadora.sumar(2, 3));
+}
+
+Verifica el comportamiento básico.
+## 2.1 Análisis del método dividir:
+
+```
+
+
+## dividir
+
+```java
+
+public static int dividir(int a, int b) throws OperacionNoValidaException{
+    if (b==0)
+        throw new OperacionNoValidaException();
+    else
+        return a/b;
+}
+```
+
+Este método introduce un concepto importante:
+
+-Control explícito de error
+-Excepción personalizada
+-Uso de throws en la firma del método
+
+En lugar de permitir que Java lance una ArithmeticException, el profesor crea una excepción propia (OperacionNoValidaException). Esto es una buena práctica cuando se quiere:
+
+Controlar el tipo de error.
+
+Personalizar el mensaje.
+
+Adaptar el comportamiento a las necesidades del sistema.
+
+## 2.2. Análisis de la excepción personalizada
+
+Clase:
+
+```java
+
+es.etg.dax.testing.exception.OperacionNoValidaException
+public class OperacionNoValidaException extends Exception{
+
+    public static final String MSG = "No se puede dividir por cero";
+
+    @Override
+    public String getMessage() {
+        return MSG;
+    }
+}
+```
+
+Aspectos importantes:
+
+Hereda de Exception → es una excepción checked.
+
+Obliga a usar throws en el método dividir.
+
+Define un mensaje constante (MSG).
+
+Sobrescribe getMessage().
+
+## Prueba incorrecta intencionada:
+
+```java
+
+@Test
+void sumarPositivosMal() {
+    assertEquals(4, Calculadora.sumar(2, 3));
+}
+
+```
+
+-Qué ocurre cuando una prueba falla.
+
+-Cómo JUnit muestra errores.
+
+-La importancia de definir correctamente el valor esperado.
+
+## Uso de assertAll
+
+```java
+assertAll("Suma",
+    () -> assertEquals(5, Calculadora.sumar(1, 4)),
+    () -> assertEquals(5, Calculadora.sumar(2, 3)),
+    () -> assertEquals(1, Calculadora.sumar(0, 1)),
+    () -> assertEquals(-1, Calculadora.sumar(1, -2))
+
+);
+
+```
+assertAll permite:
+
+Agrupar varias comprobaciones.
+
+Ejecutarlas todas aunque una falle.
+
+Mostrar todos los errores al final.
+
 ## 3.Estudio de Caja Negra – Método `dividir`
+
+El análisis de caja negra del método `dividir` ha permitido:
+
+- Identificar correctamente las entradas y salidas.
+- Definir clases de equivalencia válidas e inválidas.
+- Establecer valores límite relevantes.
+- Determinar los casos de prueba necesarios para cubrir el comportamiento funcional.
+
+Se ha comprobado que el único caso inválido es cuando el divisor es cero, situación en la que se lanza una excepción personalizada.
+
+Este análisis demuestra la importancia de estudiar el comportamiento del método sin tener en cuenta su implementación interna.
+
 
 ## 1️ Identificación del método a probar
 
@@ -142,6 +278,24 @@ public static int dividir(int a, int b) throws OperacionNoValidaException{
 ---
 
 # Implementación en JUnit 5
+
+### 5. Análisis de la clase CalculadoraTest
+
+La clase de pruebas usa JUnit 5:
+
+import static org.junit.jupiter.api.Assertions.*;
+
+Se utilizan:
+
+-assertEquals
+
+-assertThrows
+
+-assertAll
+
+-@DisplayName
+
+Esto indica un uso correcto del framework de testing.
 
 ```java
 package es.etg.dax.testing;
