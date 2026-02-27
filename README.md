@@ -180,3 +180,59 @@ Se han cubierto:
 Las pruebas implementadas en JUnit validan todos los escenarios definidos en el análisis.
 
 Por tanto, la calculadora cumple los requisitos funcionales establecidos.
+
+## Puntos a añadir:
+
+# Uso de Enumeraciones (enum) en Java
+
+
+Una **enumeración (`enum`)** es un tipo de dato especial que permite definir un conjunto fijo de constantes. 
+Se utiliza cuando una variable solo puede tomar un número limitado de valores previamente definidos.
+
+## Ejemplo de enumeración
+
+```java
+public enum Operacion {
+    SUMA,
+    RESTA,
+    MULTIPLICACION,
+    DIVISION
+}
+
+```
+
+En este caso, la variable de tipo `Operacion` solo puede tener uno de esos cuatro valores.
+
+## Aplicación en la Calculadora
+
+En la implementación actual de la clase `Calculadora`, las operaciones están definidas mediante métodos independientes:
+
+* `sumar`
+* `restar`
+* `multiplicar`
+* `dividir`
+
+Por este motivo, no es necesario utilizar una enumeración para ejecutar las pruebas, ya que cada operación se invoca directamente mediante su propio método.
+
+## ¿Cuándo sería útil usar un enum?
+
+El uso de una enumeración tendría sentido si la calculadora estuviera diseñada con un único método general, por ejemplo:
+
+```java
+calcular(int a, int b, Operacion operacion)
+```
+
+En ese caso, el `enum` permitiría controlar de forma segura qué tipo de operación se desea ejecutar, evitando errores y mejorando la claridad del código.
+
+## Conclusión
+
+En esta práctica concreta, el uso de enumeraciones no es obligatorio ni necesario para la realización de las pruebas de caja negra, ya que las operaciones están separadas en métodos individuales.
+
+No obstante, se trata de una buena práctica de programación que puede aplicarse en diseños más estructurados o en versiones futuras del proyecto.
+
+```
+
+---
+
+Si quieres, puedo adaptarlo a un tono más simple (nivel DAM/DAW) o más técnico (nivel universitario).
+```
