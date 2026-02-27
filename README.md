@@ -1,102 +1,162 @@
 
+# Descripción del Proyecto
 
-# PRÁCTICA: ANÁLISIS Y TESTING DE UNA CALCULADORA EN JAVA
+La clase `Calculadora` implementa cuatro operaciones matemáticas básicas:
 
----
+- `sumar(int a, int b)`
+- `restar(int a, int b)`
+- `multiplicar(int a, int b)`
+- `dividir(int a, int b)`
 
-## 1️ Sentido del proyecto y posibles usos
+Todas las operaciones reciben **dos valores enteros** como entrada y devuelven un valor entero como resultado.
 
-### 1.1 Descripción general
-
-El proyecto consiste en una clase `Calculadora` que implementa operaciones aritméticas básicas:
-
-* Suma
-* Resta
-* Multiplicación
-* División
-
-Además, incluye una excepción personalizada `OperacionNoValidaException` para controlar divisiones entre cero, permitiendo manejar errores de forma controlada.
-
-### 1.2 Sentido del proyecto
-
-Este proyecto tiene un enfoque **didáctico y práctico**, que permite trabajar los siguientes conceptos:
-
-* Métodos estáticos (`static`) en Java.
-* Operaciones aritméticas básicas con enteros.
-* Manejo de **excepciones personalizadas**.
-* Pruebas unitarias con **JUnit 5**.
-* Técnicas de prueba de **caja negra** y análisis funcional.
-* Cobertura de código y control de errores.
-* Validación del comportamiento esperado mediante testing automatizado.
-
-Es un ejemplo simple, pero útil para entender la **importancia de las pruebas** y la separación entre **lógica y control de errores**.
-
-### 1.3 Posibles usos
-
-* Base para una calculadora más compleja.
-* Ejercicio práctico en asignaturas de programación.
-* Introducción a **pruebas automatizadas** y diseño de pruebas.
-* Ejemplo de control de errores y buenas prácticas en Java.
+En el caso de la división, si el divisor (`b`) es igual a 0, el método lanza una excepción controlada `OperacionNoValidaException`.
 
 ---
 
-## 2️ Análisis de la suma
+# Metodología: Pruebas de Caja Negra
 
-### 2.1 Método sumar
+Se ha aplicado la técnica de **caja negra**, donde no se analiza el código interno del programa, sino únicamente:
 
-```java
-public static int sumar(int a, int b){
-    return a + b;
-}
-```
+- Entradas
+- Salidas
+- Comportamiento esperado
 
-* Método `static`: no requiere crear instancia de la clase.
-* Realiza la operación básica de suma de enteros.
-* Se puede usar con valores positivos, negativos o cero.
+##  Identificación de Entradas
 
-### 2.2 Pruebas de suma
+El sistema recibe dos entradas:
 
-#### 2.2.1 Prueba correcta
+- `a` (entero)
+- `b` (entero)
 
-```java
-@Test
-void sumarPositivos() {
-    assertEquals(5, Calculadora.sumar(2, 3));
-}
-```
+Ambas pueden tomar valores:
 
-* Verifica suma de enteros positivos.
-* Confirma que el método retorna el valor esperado.
+- Positivos
+- Negativos
+- Cero
 
-#### 2.2.2 Prueba incorrecta intencionada
-
-```java
-@Test
-void sumarPositivosMal() {
-    assertEquals(4, Calculadora.sumar(2, 3));
-}
-```
-
-* Muestra qué ocurre cuando la prueba falla.
-* Permite interpretar los errores que JUnit muestra.
-* Enseña la importancia de definir correctamente el valor esperado.
-
-#### 2.2.3 Uso de assertAll
-
-```java
-assertAll("Suma",
-    () -> assertEquals(5, Calculadora.sumar(1, 4)),
-    () -> assertEquals(5, Calculadora.sumar(2, 3)),
-    () -> assertEquals(1, Calculadora.sumar(0, 1)),
-    () -> assertEquals(-1, Calculadora.sumar(1, -2))
-);
-```
-
-* Agrupa varias comprobaciones en un solo test.
-* Ejecuta todas las comprobaciones incluso si alguna falla.
-* Permite mostrar todos los errores al final de la prueba.
+En el caso de la división:
+- `b = 0` es una clase inválida que debe generar una excepción.
 
 ---
+
+## Clases de Equivalencia
+
+Para ambas entradas:
+
+- Enteros positivos
+- Enteros negativos
+- Cero
+
+Para división:
+
+- Clase inválida → divisor igual a cero
+
+---
+
+## Análisis de Límites
+
+Se han probado valores cercanos a los puntos críticos:
+
+- -1
+- 0
+- 1
+
+Estos valores permiten comprobar:
+- Cambios de signo
+- Comportamiento con cero
+- División por cero
+
+---
+
+# Resultados de los Test
+
+Las pruebas se han implementado con **JUnit 5**.
+
+---
+
+## 3.1 Test de Suma
+
+| Caso | Entrada (a,b) | Resultado Esperado | Resultado Obtenido | Estado |
+|------|--------------|-------------------|--------------------|--------|
+| CP1 | (2,3) | 5 | 5 | ✅ OK |
+| CP2 | (-2,-3) | -5 | -5 | ✅ OK |
+| CP3 | (2,-2) | 0 | 0 | ✅ OK |
+| CP4 | (0,5) | 5 | 5 | ✅ OK |
+
+**Resultado:** Todas las pruebas de suma se ejecutan correctamente.
+
+---
+
+## 3.2 Test de Resta
+
+| Caso | Entrada | Resultado Esperado | Resultado Obtenido | Estado |
+|------|----------|-------------------|--------------------|--------|
+| CP5 | (5,3) | 2 | 2 | ✅ OK |
+| CP6 | (-5,-3) | -2 | -2 | ✅ OK |
+| CP7 | (0,4) | -4 | -4 | ✅ OK |
+
+**Resultado:** La operación de resta funciona correctamente en todos los casos probados.
+
+---
+
+## 3.3 Test de Multiplicación
+
+| Caso | Entrada | Resultado Esperado | Resultado Obtenido | Estado |
+|------|----------|-------------------|--------------------|--------|
+| CP8 | (2,3) | 6 | 6 | ✅ OK |
+| CP9 | (-2,3) | -6 | -6 | ✅ OK |
+| CP10 | (0,5) | 0 | 0 | ✅ OK |
+
+**Resultado:** La multiplicación funciona correctamente para valores positivos, negativos y cero.
+
+---
+
+##  3.4 Test de División
+
+| Caso | Entrada | Resultado Esperado | Resultado Obtenido | Estado |
+|------|----------|-------------------|--------------------|--------|
+| CP11 | (6,3) | 2 | 2 | ✅ OK |
+| CP12 | (5,2) | 2 (división entera) | 2 | ✅ OK |
+
+**Resultado:** La división entera se realiza correctamente.
+
+---
+
+##  3.5 Test División por Cero
+
+| Caso | Entrada | Resultado Esperado | Estado |
+|------|----------|-------------------|--------|
+| CP13 | (5,0) | OperacionNoValidaException | ✅ OK |
+
+**Resultado:** La excepción se lanza correctamente cuando el divisor es cero.
+
+---
+
+# Conclusión
+
+Tras ejecutar todas las pruebas definidas mediante la técnica de caja negra, se puede concluir que:
+
+- La calculadora realiza correctamente las operaciones de suma, resta y multiplicación.
+- La división funciona correctamente para valores válidos.
+- Se controla adecuadamente el error de división por cero mediante una excepción.
+
+Se han cubierto:
+
+- Valores positivos
+- Valores negativos
+- Cero
+- Casos límite
+- Caso excepcional (división por cero)
+
+La aplicación cumple los requisitos funcionales establecidos.
+
+---
+
+# ✔ Estado Final
+
+ Todas las pruebas han sido superadas correctamente.
+
 
 ## 3️ Análisis del método dividir (Caja Negra)
 
